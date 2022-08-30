@@ -25,7 +25,7 @@ namespace Mistaken.Fixes
 
         public override void OnDisable()
         {
-            Exiled.Events.Handlers.Player.ChangingRole += this.Player_ChangingRole;
+            Exiled.Events.Handlers.Player.ChangingRole -= this.Player_ChangingRole;
         }
 
         public override void OnEnable()

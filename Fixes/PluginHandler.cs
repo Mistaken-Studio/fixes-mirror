@@ -25,7 +25,7 @@ namespace Mistaken.Fixes
         public override string Prefix => "MFixes";
 
         /// <inheritdoc/>
-        public override PluginPriority Priority => PluginPriority.Higher;
+        public override PluginPriority Priority => PluginPriority.Higher - 1;
 
         /// <inheritdoc/>
         public override Version RequiredExiledVersion => new Version(5, 2, 2);

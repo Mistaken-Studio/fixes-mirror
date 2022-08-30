@@ -62,7 +62,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Patch\CCMTargetConsolePrintPatch.cs" />
-    <Compile Include="Patch\CharacterClassManagerTargetConsolePrint.cs" />
     <Compile Include="Patch\DebugPatch.cs" />
     <Compile Include="Patch\Fix0492ShotgunDamagePatch.cs" />
     <Compile Include="Patch\FixExiledDamageHandlers.cs" />
