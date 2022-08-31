@@ -13,7 +13,7 @@ using HarmonyLib;
 
 #pragma warning disable SA1118 // Parameter should span multiple lines
 
-namespace Mistaken.Fixes.Patches
+namespace Mistaken.Fixes.Patch
 {
     [HarmonyPatch(typeof(DamageHandler), MethodType.Constructor, new Type[] { typeof(Player), typeof(Player) })]
     [HarmonyPatch(typeof(DamageHandler), MethodType.Constructor, new Type[] { typeof(Player), typeof(PlayerStatsSystem.DamageHandlerBase) })]
@@ -35,8 +35,8 @@ namespace Mistaken.Fixes.Patches
                 new CodeInstruction(OpCodes.Starg, 1),
             });
 
-            for (int i = 0; i < newInstructions.Count; i++)
-                yield return newInstructions[i];
+            foreach (CodeInstruction t in newInstructions)
+                yield return t;
 
             NorthwoodLib.Pools.ListPool<CodeInstruction>.Shared.Return(newInstructions);
             yield break;

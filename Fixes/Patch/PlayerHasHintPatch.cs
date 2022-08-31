@@ -13,7 +13,7 @@ using MEC;
 
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
 
-namespace Mistaken.Fixes.Patches
+namespace Mistaken.Fixes.Patch
 {
     [HarmonyPatch(typeof(HintDisplay), nameof(HintDisplay.Show))]
     internal static class PlayerHasHintPatch

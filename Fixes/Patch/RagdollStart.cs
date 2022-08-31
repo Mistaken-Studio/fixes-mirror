@@ -10,7 +10,7 @@ using HarmonyLib;
 
 #pragma warning disable SA1118 // Parameter should not span multiple lines
 
-namespace Mistaken.Fixes.Patches
+namespace Mistaken.Fixes.Patch
 {
     // [HarmonyPatch(typeof(Ragdoll), nameof(Ragdoll.Start))]
     internal static class RagdollStart

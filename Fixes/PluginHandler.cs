@@ -9,6 +9,7 @@ using System.Reflection;
 using Exiled.API.Enums;
 using Exiled.API.Features;
 using Hints;
+using Mistaken.Fixes.Patch;
 
 namespace Mistaken.Fixes
 {
@@ -68,8 +69,8 @@ namespace Mistaken.Fixes
 
         private void Server_WaitingForPlayers()
         {
-            Patches.RoundStartedPatch.AlreadyStarted = false;
-            MEC.Timing.RunCoroutine(Patches.YeetConsolePatch.UpdateConsolePrint());
+            RoundStartedPatch.AlreadyStarted = false;
+            MEC.Timing.RunCoroutine(YeetConsolePatch.UpdateConsolePrint());
         }
     }
 }

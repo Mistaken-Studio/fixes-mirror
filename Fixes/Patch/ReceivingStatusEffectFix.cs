@@ -7,7 +7,7 @@
 using CustomPlayerEffects;
 using HarmonyLib;
 
-namespace Mistaken.Fixes.Patches
+namespace Mistaken.Fixes.Patch
 {
     [HarmonyPatch(typeof(Visuals939), nameof(Visuals939.Disabled))]
     internal static class ReceivingStatusEffectFix

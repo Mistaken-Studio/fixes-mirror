@@ -10,7 +10,7 @@ using HarmonyLib;
 
 #pragma warning disable SA1118 // Parameter should not span multiple lines
 
-namespace Mistaken.Fixes.Patches
+namespace Mistaken.Fixes.Patch
 {
     [HarmonyPatch(typeof(Exiled.API.Features.Scp914), nameof(Exiled.API.Features.Scp914.Scp914Controller), MethodType.Getter)]
     internal class FixExiledSCP914ControllerPatch
@@ -25,8 +25,8 @@ namespace Mistaken.Fixes.Patches
                 new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(UnityEngine.Object), "op_Inequality")),
             });
 
-            for (int i = 0; i < newInstructions.Count; i++)
-                yield return newInstructions[i];
+            foreach (var t in newInstructions)
+                yield return t;
 
             NorthwoodLib.Pools.ListPool<CodeInstruction>.Shared.Return(newInstructions);
             yield break;

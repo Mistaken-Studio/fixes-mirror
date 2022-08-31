@@ -6,7 +6,7 @@
 
 using HarmonyLib;
 
-namespace Mistaken.Fixes.Patches
+namespace Mistaken.Fixes.Patch
 {
     [HarmonyPatch(typeof(RoundSummary), nameof(RoundSummary.RoundInProgress))]
     internal static class RoundInProgressPatch

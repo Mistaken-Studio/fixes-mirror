@@ -11,7 +11,7 @@ using PlayerStatsSystem;
 
 #pragma warning disable SA1118 // Parameter should span multiple lines
 
-namespace Mistaken.Fixes.Patches
+namespace Mistaken.Fixes.Patch
 {
     [HarmonyPatch(typeof(FirearmDamageHandler), nameof(FirearmDamageHandler.ProcessDamage))]
     internal static class Fix0492ShotgunDamagePatch

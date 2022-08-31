@@ -12,7 +12,7 @@ using HarmonyLib;
 
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
 
-namespace Mistaken.Fixes.Patches
+namespace Mistaken.Fixes.Patch
 {
     internal static class DebugPatch
     {

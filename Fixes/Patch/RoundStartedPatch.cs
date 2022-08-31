@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Reflection.Emit;
 using HarmonyLib;
 
-namespace Mistaken.Fixes.Patches
+namespace Mistaken.Fixes.Patch
 {
 #pragma warning disable SA1118
     [HarmonyPatch(typeof(RoundSummary), nameof(RoundSummary.SetStartClassList))]
