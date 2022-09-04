@@ -12,7 +12,7 @@ using HarmonyLib;
 
 namespace Mistaken.Fixes.Patch
 {
-    // [HarmonyPatch(typeof(Ragdoll), nameof(Ragdoll.Start))]
+    [HarmonyPatch(typeof(Ragdoll), nameof(Ragdoll.Start))]
     internal static class RagdollStart
     {
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
