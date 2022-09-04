@@ -21,11 +21,11 @@ namespace Mistaken.Fixes.Patch
         {
             List<CodeInstruction> newInstructions = ListPool<CodeInstruction>.Shared.Rent(instructions);
 
-            Label label = generator.DefineLabel();
+            Label continueLabel = generator.DefineLabel();
 
             int index = newInstructions.FindIndex(x => x.opcode == OpCodes.Callvirt);
 
-            newInstructions[index].WithLabels(label);
+            newInstructions[index].WithLabels(continueLabel);
 
             newInstructions.InsertRange(index, new CodeInstruction[]
             {
@@ -33,7 +33,7 @@ namespace Mistaken.Fixes.Patch
                 new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(NetworkConnection), nameof(NetworkConnection.connectionId))),
                 new CodeInstruction(OpCodes.Ldc_I4_0),
                 new CodeInstruction(OpCodes.Ceq),
-                new CodeInstruction(OpCodes.Brfalse_S, label),
+                new CodeInstruction(OpCodes.Brfalse_S, continueLabel),
                 new CodeInstruction(OpCodes.Pop),
                 new CodeInstruction(OpCodes.Ret),
             });

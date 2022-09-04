@@ -1,10 +1,11 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="NCIdentityPatches.cs" company="Mistaken">
+// <copyright file="NetworkConnectionIdentityPatches.cs" company="Mistaken">
 // Copyright (c) Mistaken. All rights reserved.
 // </copyright>
 // -----------------------------------------------------------------------
 
 using System.Collections.Generic;
+using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
 using InventorySystem.Disarming;
@@ -15,17 +16,23 @@ using Mirror;
 
 namespace Mistaken.Fixes.Patch
 {
-    [HarmonyPatch(typeof(FirearmBasicMessagesHandler), nameof(FirearmBasicMessagesHandler.ServerRequestReceived))]
-    [HarmonyPatch(typeof(FirearmBasicMessagesHandler), nameof(FirearmBasicMessagesHandler.ServerShotReceived))]
-    [HarmonyPatch(typeof(DisarmingHandlers), nameof(DisarmingHandlers.ServerProcessDisarmMessage))]
-    internal static class NCIdentityPatches
+    [HarmonyPatch]
+    internal static class NetworkConnectionIdentityPatches
     {
+        private static IEnumerable<MethodBase> TargetMethods()
+        {
+            yield return AccessTools.Method(typeof(FirearmBasicMessagesHandler), nameof(FirearmBasicMessagesHandler.ServerRequestReceived));
+            yield return AccessTools.Method(typeof(FirearmBasicMessagesHandler), nameof(FirearmBasicMessagesHandler.ServerRequestReceived));
+            yield return AccessTools.Method(typeof(DisarmingHandlers), nameof(DisarmingHandlers.ServerProcessDisarmMessage));
+        }
+
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
         {
             List<CodeInstruction> newInstructions = NorthwoodLib.Pools.ListPool<CodeInstruction>.Shared.Rent(instructions);
 
-            Label continueLabel = generator.DefineLabel();
-            newInstructions[0].WithLabels(continueLabel);
+            Label returnLabel = generator.DefineLabel();
+
+            newInstructions[newInstructions.Count - 1].WithLabels(returnLabel);
 
             newInstructions.InsertRange(0, new CodeInstruction[]
             {
@@ -33,11 +40,7 @@ namespace Mistaken.Fixes.Patch
                 new CodeInstruction(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(NetworkConnection), nameof(NetworkConnection.identity))),
                 new CodeInstruction(OpCodes.Ldnull),
                 new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(UnityEngine.Object), "op_Equality")),
-                new CodeInstruction(OpCodes.Brfalse_S, continueLabel),
-                new CodeInstruction(OpCodes.Ldstr, "ServerRequestReceived || ServerShotReceived || ServerProcessDisarmMessage threw an exception!"),
-                new CodeInstruction(OpCodes.Box, typeof(string)),
-                new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(UnityEngine.Debug), nameof(UnityEngine.Debug.LogError), new System.Type[] { typeof(object) })),
-                new CodeInstruction(OpCodes.Ret),
+                new CodeInstruction(OpCodes.Brtrue_S, returnLabel),
             });
 
             for (int i = 0; i < newInstructions.Count; i++)
