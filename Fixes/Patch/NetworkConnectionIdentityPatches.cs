@@ -7,7 +7,6 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using Exiled.API.Features;
 using HarmonyLib;
 using InventorySystem.Disarming;
 using InventorySystem.Items.Firearms.BasicMessages;
