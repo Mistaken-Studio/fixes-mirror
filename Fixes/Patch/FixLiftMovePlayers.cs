@@ -1,38 +1,35 @@
 ﻿// -----------------------------------------------------------------------
-// <copyright file="FixExiledDamageHandlers.cs" company="Mistaken">
+// <copyright file="FixLiftMovePlayers.cs" company="Mistaken">
 // Copyright (c) Mistaken. All rights reserved.
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection.Emit;
-using Exiled.API.Features;
-using Exiled.API.Features.DamageHandlers;
 using HarmonyLib;
 
 #pragma warning disable SA1118 // Parameter should span multiple lines
 
 namespace Mistaken.Fixes.Patch
 {
-    [HarmonyPatch(typeof(DamageHandler), MethodType.Constructor, new Type[] { typeof(Player), typeof(Player) })]
-    [HarmonyPatch(typeof(DamageHandler), MethodType.Constructor, new Type[] { typeof(Player), typeof(PlayerStatsSystem.DamageHandlerBase) })]
-    internal static class FixExiledDamageHandlers
+    [HarmonyPatch(typeof(Lift), nameof(Lift.MovePlayers))]
+    internal static class FixLiftMovePlayers
     {
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
         {
             List<CodeInstruction> newInstructions = NorthwoodLib.Pools.ListPool<CodeInstruction>.Shared.Rent(instructions);
 
-            Label label = generator.DefineLabel();
+            Label returnLabel = generator.DefineLabel();
 
-            newInstructions[0].WithLabels(label);
+            newInstructions[newInstructions.Count - 1].WithLabels(returnLabel);
 
             newInstructions.InsertRange(0, new CodeInstruction[]
             {
-                new CodeInstruction(OpCodes.Ldarg_1),
-                new CodeInstruction(OpCodes.Brtrue_S, label),
-                new CodeInstruction(OpCodes.Call, AccessTools.PropertyGetter(typeof(Server), nameof(Server.Host))),
-                new CodeInstruction(OpCodes.Starg, 1),
+                new CodeInstruction(OpCodes.Ldarg_0),
+                new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(Lift), nameof(Lift.elevators))),
+                new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(FixLiftMovePlayers), nameof(FixLiftMovePlayers.IsNull))),
+                new CodeInstruction(OpCodes.Brtrue_S, returnLabel),
             });
 
             for (int i = 0; i < newInstructions.Count; i++)
@@ -41,5 +38,8 @@ namespace Mistaken.Fixes.Patch
             NorthwoodLib.Pools.ListPool<CodeInstruction>.Shared.Return(newInstructions);
             yield break;
         }
+
+        private static bool IsNull(Lift.Elevator[] lifts) =>
+            lifts.Any(x => x.target == null);
     }
 }

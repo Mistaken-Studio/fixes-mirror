@@ -60,6 +60,7 @@
     <Compile Include="Patch\CCMTargetConsolePrintPatch.cs" />
     <Compile Include="Patch\DebugPatch.cs" />
     <Compile Include="Patch\Fix0492ShotgunDamagePatch.cs" />
+    <Compile Include="Patch\FixLiftMovePlayers.cs" />
     <Compile Include="Patch\FixExiledDamageHandlers.cs" />
     <Compile Include="Patch\FixExiledSCP914ControllerPatch.cs" />
     <Compile Include="FixItemsDisappearOnEscapeHandler.cs" />

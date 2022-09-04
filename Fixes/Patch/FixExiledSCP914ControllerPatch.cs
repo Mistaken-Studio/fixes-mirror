@@ -25,8 +25,8 @@ namespace Mistaken.Fixes.Patch
                 new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(UnityEngine.Object), "op_Inequality")),
             });
 
-            foreach (var t in newInstructions)
-                yield return t;
+            for (int i = 0; i < newInstructions.Count; i++)
+                yield return newInstructions[i];
 
             NorthwoodLib.Pools.ListPool<CodeInstruction>.Shared.Return(newInstructions);
             yield break;
