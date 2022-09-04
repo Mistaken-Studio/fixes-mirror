@@ -68,7 +68,7 @@
     <Compile Include="Patch\FixServerDyingPatch.cs" />
     <Compile Include="Patch\FixShotgunPatch.cs" />
     <Compile Include="Patch\MakeCustomSyncWriterPatch.cs" />
-    <Compile Include="Patch\NCIdentityPatches.cs" />
+    <Compile Include="Patch\NetworkConnectionIdentityPatches.cs" />
     <Compile Include="Patch\PlayerHasHintPatch.cs" />
     <Compile Include="Patch\PlayerMovementSyncForcePosition.cs" />
     <Compile Include="Patch\PlayerMovementSyncForceRotation.cs" />
