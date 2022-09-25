@@ -28,7 +28,7 @@ namespace Mistaken.Fixes.Patch
             int x = 0;
             foreach (var item in instructions)
             {
-                Log.Info(item.ToString());
+                Log.Info($"[{x}] {item}");
                 yield return item;
                 yield return new CodeInstruction(OpCodes.Ldc_I4, x++);
                 yield return new CodeInstruction(OpCodes.Stsfld, fld);
