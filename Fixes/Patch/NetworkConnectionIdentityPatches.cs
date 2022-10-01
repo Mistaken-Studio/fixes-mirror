@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
 using InventorySystem.Disarming;
+using InventorySystem.Items.Firearms.Attachments;
 using InventorySystem.Items.Firearms.BasicMessages;
 using Mirror;
 
@@ -22,7 +23,9 @@ namespace Mistaken.Fixes.Patch
         private static IEnumerable<MethodBase> TargetMethods()
         {
             yield return AccessTools.Method(typeof(FirearmBasicMessagesHandler), nameof(FirearmBasicMessagesHandler.ServerRequestReceived));
+            yield return AccessTools.Method(typeof(AttachmentsServerHandler), nameof(AttachmentsServerHandler.ServerReceiveChangeRequest));
             yield return AccessTools.Method(typeof(FirearmBasicMessagesHandler), nameof(FirearmBasicMessagesHandler.ServerShotReceived));
+            yield return AccessTools.Method(typeof(AttachmentsServerHandler), nameof(AttachmentsServerHandler.ServerReceivePreference));
             yield return AccessTools.Method(typeof(DisarmingHandlers), nameof(DisarmingHandlers.ServerProcessDisarmMessage));
         }
 
