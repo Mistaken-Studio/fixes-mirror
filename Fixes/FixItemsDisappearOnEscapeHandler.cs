@@ -14,7 +14,7 @@ using UnityEngine;
 
 namespace Mistaken.Fixes
 {
-    internal class FixItemsDisappearOnEscapeHandler : Module
+    internal sealed class FixItemsDisappearOnEscapeHandler : Module
     {
         public FixItemsDisappearOnEscapeHandler(IPlugin<IConfig> plugin)
             : base(plugin)
@@ -35,7 +35,8 @@ namespace Mistaken.Fixes
 
         private void Player_ChangingRole(Exiled.Events.EventArgs.ChangingRoleEventArgs ev)
         {
-            List<ItemType> itemsToDrop = new List<ItemType>();
+            List<ItemType> itemsToDrop = new();
+
             foreach (var item in ev.Player.Inventory.UserInventory.Items.ToArray())
             {
                 if (item.Value.ItemTypeId == ItemType.SCP2176 || item.Value.ItemTypeId == ItemType.SCP018)
@@ -52,6 +53,7 @@ namespace Mistaken.Fixes
         {
             yield return MEC.Timing.WaitForSeconds(0.5f);
             var position = player.Position - Vector3.up;
+
             foreach (var item in itemsToDrop)
             {
                 Item.Create(item, player).Spawn(position);

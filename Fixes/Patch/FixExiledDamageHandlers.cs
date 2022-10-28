@@ -15,8 +15,8 @@ using HarmonyLib;
 
 namespace Mistaken.Fixes.Patch
 {
-    [HarmonyPatch(typeof(DamageHandler), MethodType.Constructor, new Type[] { typeof(Player), typeof(Player) })]
-    [HarmonyPatch(typeof(DamageHandler), MethodType.Constructor, new Type[] { typeof(Player), typeof(PlayerStatsSystem.DamageHandlerBase) })]
+    [HarmonyPatch(typeof(DamageHandler), MethodType.Constructor, new[] { typeof(Player), typeof(Player) })]
+    [HarmonyPatch(typeof(DamageHandler), MethodType.Constructor, new[] { typeof(Player), typeof(PlayerStatsSystem.DamageHandlerBase) })]
     internal static class FixExiledDamageHandlers
     {
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
@@ -29,17 +29,16 @@ namespace Mistaken.Fixes.Patch
 
             newInstructions.InsertRange(0, new CodeInstruction[]
             {
-                new CodeInstruction(OpCodes.Ldarg_1),
-                new CodeInstruction(OpCodes.Brtrue_S, label),
-                new CodeInstruction(OpCodes.Call, AccessTools.PropertyGetter(typeof(Server), nameof(Server.Host))),
-                new CodeInstruction(OpCodes.Starg, 1),
+                new(OpCodes.Ldarg_1),
+                new(OpCodes.Brtrue_S, label),
+                new(OpCodes.Call, AccessTools.PropertyGetter(typeof(Server), nameof(Server.Host))),
+                new(OpCodes.Starg, 1),
             });
 
-            for (int i = 0; i < newInstructions.Count; i++)
-                yield return newInstructions[i];
+            foreach (var instruction in newInstructions)
+                yield return instruction;
 
             NorthwoodLib.Pools.ListPool<CodeInstruction>.Shared.Return(newInstructions);
-            yield break;
         }
     }
 }

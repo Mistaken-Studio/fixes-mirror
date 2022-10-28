@@ -39,19 +39,17 @@ namespace Mistaken.Fixes.Patch
 
             newInstructions.InsertRange(0, new CodeInstruction[]
             {
-                new CodeInstruction(OpCodes.Ldarg_0),
-                new CodeInstruction(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(NetworkConnection), nameof(NetworkConnection.identity))),
-                new CodeInstruction(OpCodes.Ldnull),
-                new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(UnityEngine.Object), "op_Equality")),
-                new CodeInstruction(OpCodes.Brtrue_S, returnLabel),
+                new(OpCodes.Ldarg_0),
+                new(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(NetworkConnection), nameof(NetworkConnection.identity))),
+                new(OpCodes.Ldnull),
+                new(OpCodes.Call, AccessTools.Method(typeof(UnityEngine.Object), "op_Equality")),
+                new(OpCodes.Brtrue_S, returnLabel),
             });
 
-            for (int i = 0; i < newInstructions.Count; i++)
-                yield return newInstructions[i];
+            foreach (var instruction in newInstructions)
+                yield return instruction;
 
             NorthwoodLib.Pools.ListPool<CodeInstruction>.Shared.Return(newInstructions);
-
-            yield break;
         }
     }
 }

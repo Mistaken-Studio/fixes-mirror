@@ -13,7 +13,7 @@ using HarmonyLib;
 namespace Mistaken.Fixes.Patch
 {
     [HarmonyPatch(typeof(Exiled.API.Features.Scp914), nameof(Exiled.API.Features.Scp914.Scp914Controller), MethodType.Getter)]
-    internal class FixExiledSCP914ControllerPatch
+    internal sealed class FixExiledSCP914ControllerPatch
     {
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
         {
@@ -21,15 +21,14 @@ namespace Mistaken.Fixes.Patch
 
             newInstructions.InsertRange(2, new CodeInstruction[]
             {
-                new CodeInstruction(OpCodes.Ldnull),
-                new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(UnityEngine.Object), "op_Inequality")),
+                new(OpCodes.Ldnull),
+                new(OpCodes.Call, AccessTools.Method(typeof(UnityEngine.Object), "op_Inequality")),
             });
 
-            for (int i = 0; i < newInstructions.Count; i++)
-                yield return newInstructions[i];
+            foreach (var instruction in newInstructions)
+                yield return instruction;
 
             NorthwoodLib.Pools.ListPool<CodeInstruction>.Shared.Return(newInstructions);
-            yield break;
         }
     }
 }

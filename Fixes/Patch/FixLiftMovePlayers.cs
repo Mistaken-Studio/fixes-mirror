@@ -26,17 +26,16 @@ namespace Mistaken.Fixes.Patch
 
             newInstructions.InsertRange(0, new CodeInstruction[]
             {
-                new CodeInstruction(OpCodes.Ldarg_0),
-                new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(Lift), nameof(Lift.elevators))),
-                new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(FixLiftMovePlayers), nameof(FixLiftMovePlayers.IsNull))),
-                new CodeInstruction(OpCodes.Brtrue_S, returnLabel),
+                new(OpCodes.Ldarg_0),
+                new(OpCodes.Ldfld, AccessTools.Field(typeof(Lift), nameof(Lift.elevators))),
+                new(OpCodes.Call, AccessTools.Method(typeof(FixLiftMovePlayers), nameof(FixLiftMovePlayers.IsNull))),
+                new(OpCodes.Brtrue_S, returnLabel),
             });
 
-            for (int i = 0; i < newInstructions.Count; i++)
-                yield return newInstructions[i];
+            foreach (var instruction in newInstructions)
+                yield return instruction;
 
             NorthwoodLib.Pools.ListPool<CodeInstruction>.Shared.Return(newInstructions);
-            yield break;
         }
 
         private static bool IsNull(Lift.Elevator[] lifts) =>

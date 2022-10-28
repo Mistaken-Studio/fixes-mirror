@@ -8,9 +8,10 @@ using System.Collections.Generic;
 using System.Reflection.Emit;
 using HarmonyLib;
 
+#pragma warning disable SA1118 // Parameters should span multiple lines
+
 namespace Mistaken.Fixes.Patch
 {
-#pragma warning disable SA1118
     [HarmonyPatch(typeof(RoundSummary), nameof(RoundSummary.SetStartClassList))]
     internal static class RoundStartedPatch
     {
@@ -26,18 +27,16 @@ namespace Mistaken.Fixes.Patch
 
             newInstructions.InsertRange(newInstructions.Count - 2, new CodeInstruction[]
             {
-                new CodeInstruction(OpCodes.Call, AccessTools.PropertyGetter(typeof(RoundStartedPatch), "AlreadyStarted")),
-                new CodeInstruction(OpCodes.Brtrue, label),
-                new CodeInstruction(OpCodes.Ldc_I4_1),
-                new CodeInstruction(OpCodes.Call, AccessTools.PropertySetter(typeof(RoundStartedPatch), "AlreadyStarted")),
+                new(OpCodes.Call, AccessTools.PropertyGetter(typeof(RoundStartedPatch), nameof(AlreadyStarted))),
+                new(OpCodes.Brtrue, label),
+                new(OpCodes.Ldc_I4_1),
+                new(OpCodes.Call, AccessTools.PropertySetter(typeof(RoundStartedPatch), nameof(AlreadyStarted))),
             });
 
-            for (int i = 0; i < newInstructions.Count; i++)
-                yield return newInstructions[i];
+            foreach (var instruction in newInstructions)
+                yield return instruction;
 
             NorthwoodLib.Pools.ListPool<CodeInstruction>.Shared.Return(newInstructions);
-
-            yield break;
         }
     }
 }

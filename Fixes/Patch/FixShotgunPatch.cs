@@ -28,28 +28,28 @@ namespace Mistaken.Fixes.Patch
 
             newInstructions.InsertRange(index, new CodeInstruction[]
             {
-                new CodeInstruction(OpCodes.Ldarg_0),
-                new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(BuckshotHitreg), nameof(BuckshotHitreg.Hits))),
-                new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(FixShotgunPatch), nameof(FixShotgunPatch.ApplyHits))),
-                new CodeInstruction(OpCodes.Dup),
-                new CodeInstruction(OpCodes.Stloc_2),
+                new(OpCodes.Ldarg_0),
+                new(OpCodes.Ldsfld, AccessTools.Field(typeof(BuckshotHitreg), nameof(BuckshotHitreg.Hits))),
+                new(OpCodes.Call, AccessTools.Method(typeof(FixShotgunPatch), nameof(FixShotgunPatch.ApplyHits))),
+                new(OpCodes.Dup),
+                new(OpCodes.Stloc_2),
             });
 
-            for (int i = 0; i < newInstructions.Count; i++)
-                yield return newInstructions[i];
+            foreach (var instruction in newInstructions)
+                yield return instruction;
 
             NorthwoodLib.Pools.ListPool<CodeInstruction>.Shared.Return(newInstructions);
-
-            yield break;
         }
 
         private static float ApplyHits(BuckshotHitreg instance, Dictionary<IDestructible, List<BuckshotHitreg.ShotgunHit>> hits)
         {
             float num = 0f;
+
             foreach (IDestructible target in hits.Keys)
             {
                 float damage = 0f;
                 Vector3 hitPosition = Vector3.zero;
+
                 foreach (BuckshotHitreg.ShotgunHit hit in hits[target])
                 {
                     damage += hit.Damage;

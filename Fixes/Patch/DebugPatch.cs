@@ -16,25 +16,24 @@ namespace Mistaken.Fixes.Patch
 {
     internal static class DebugPatch
     {
-        private static int instructionCounter = 0;
+        private static int _instructionCounter = 0;
 
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
         {
-            var fld = AccessTools.Field(typeof(DebugPatch), nameof(DebugPatch.instructionCounter));
+            var fld = AccessTools.Field(typeof(DebugPatch), nameof(_instructionCounter));
 
-            yield return new CodeInstruction(OpCodes.Ldc_I4_M1);
-            yield return new CodeInstruction(OpCodes.Stsfld, fld);
+            yield return new(OpCodes.Ldc_I4_M1);
+            yield return new(OpCodes.Stsfld, fld);
 
             int x = 0;
+
             foreach (var item in instructions)
             {
                 Log.Info($"[{x}] {item}");
                 yield return item;
-                yield return new CodeInstruction(OpCodes.Ldc_I4, x++);
-                yield return new CodeInstruction(OpCodes.Stsfld, fld);
+                yield return new(OpCodes.Ldc_I4, x++);
+                yield return new(OpCodes.Stsfld, fld);
             }
-
-            yield break;
         }
 
         [HarmonyFinalizer]
@@ -42,7 +41,7 @@ namespace Mistaken.Fixes.Patch
         {
             if (__exception != null)
             {
-                Log.Error($"Exception on instruction {instructionCounter}");
+                Log.Error($"Exception on instruction {_instructionCounter}");
                 Log.Error(__exception.Message);
                 Log.Error(__exception.StackTrace);
             }

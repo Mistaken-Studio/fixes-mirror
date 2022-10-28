@@ -28,26 +28,24 @@ namespace Mistaken.Fixes.Patch
 
             newInstructions.InsertRange(index, new CodeInstruction[]
             {
-                new CodeInstruction(OpCodes.Ldc_I4_1),
-                new CodeInstruction(OpCodes.Newarr, typeof(HintEffect)),
-                new CodeInstruction(OpCodes.Dup),
-                new CodeInstruction(OpCodes.Ldc_I4_0),
-                new CodeInstruction(OpCodes.Ldc_R4, 1f),
-                new CodeInstruction(OpCodes.Ldc_R4, 0f),
-                new CodeInstruction(OpCodes.Ldc_R4, 1f),
-                new CodeInstruction(OpCodes.Newobj, AccessTools.Constructor(typeof(AlphaEffect), new Type[]
+                new(OpCodes.Ldc_I4_1),
+                new(OpCodes.Newarr, typeof(HintEffect)),
+                new(OpCodes.Dup),
+                new(OpCodes.Ldc_I4_0),
+                new(OpCodes.Ldc_R4, 1f),
+                new(OpCodes.Ldc_R4, 0f),
+                new(OpCodes.Ldc_R4, 1f),
+                new(OpCodes.Newobj, AccessTools.Constructor(typeof(AlphaEffect), new[]
                 {
                     typeof(float), typeof(float), typeof(float),
                 })),
-                new CodeInstruction(OpCodes.Stelem_Ref),
+                new(OpCodes.Stelem_Ref),
             });
 
-            for (int i = 0; i < newInstructions.Count; i++)
-                yield return newInstructions[i];
+            foreach (var instruction in newInstructions)
+                yield return instruction;
 
             NorthwoodLib.Pools.ListPool<CodeInstruction>.Shared.Return(newInstructions);
-
-            yield break;
         }
     }
 }

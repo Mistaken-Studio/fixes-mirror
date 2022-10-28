@@ -8,36 +8,36 @@ using System;
 using System.Reflection;
 using Exiled.API.Enums;
 using Exiled.API.Features;
+using HarmonyLib;
 using Hints;
 using Mistaken.Fixes.Patch;
+using Mistaken.Updater.API.Config;
 
 namespace Mistaken.Fixes
 {
-    /// <inheritdoc/>
-    public class PluginHandler : Plugin<Config>
+    internal sealed class PluginHandler : Plugin<Config>, IAutoUpdateablePlugin
     {
-        /// <inheritdoc/>
         public override string Author => "Mistaken Devs";
 
-        /// <inheritdoc/>
         public override string Name => "Fixes";
 
-        /// <inheritdoc/>
         public override string Prefix => "MFixes";
 
-        /// <inheritdoc/>
         public override PluginPriority Priority => PluginPriority.Higher - 1;
 
-        /// <inheritdoc/>
-        public override Version RequiredExiledVersion => new Version(5, 2, 2);
+        public override Version RequiredExiledVersion => new(5, 2, 2);
 
-        /// <inheritdoc/>
+        public AutoUpdateConfig AutoUpdateConfig => new()
+        {
+            Type = SourceType.GITLAB,
+            Url = "https://git.mistaken.pl/api/v4/projects/110",
+        };
+
         public override void OnEnabled()
         {
             Instance = this;
 
-            this.harmony = new HarmonyLib.Harmony("com.mistaken.fixes");
-            this.harmony.PatchAll();
+            _harmony.PatchAll();
 
             Exiled.Events.Events.DisabledPatchesHashSet.Add(typeof(HintDisplay).GetMethod(nameof(HintDisplay.Show), BindingFlags.Instance | BindingFlags.Public));
             Exiled.Events.Events.Instance.ReloadDisabledPatches();
@@ -51,10 +51,9 @@ namespace Mistaken.Fixes
             base.OnEnabled();
         }
 
-        /// <inheritdoc/>
         public override void OnDisabled()
         {
-            this.harmony.UnpatchAll();
+            _harmony.UnpatchAll();
 
             Exiled.Events.Handlers.Server.WaitingForPlayers -= this.Server_WaitingForPlayers;
 
@@ -65,12 +64,12 @@ namespace Mistaken.Fixes
 
         internal static PluginHandler Instance { get; private set; }
 
-        private HarmonyLib.Harmony harmony;
+        private static readonly Harmony _harmony = new("com.mistaken.fixes");
 
         private void Server_WaitingForPlayers()
         {
             RoundStartedPatch.AlreadyStarted = false;
-            MEC.Timing.RunCoroutine(YeetConsolePatch.UpdateConsolePrint());
+            Mistaken.API.Diagnostics.Module.RunSafeCoroutine(YeetConsolePatch.UpdateConsolePrint(), nameof(YeetConsolePatch.UpdateConsolePrint), true);
         }
     }
 }
