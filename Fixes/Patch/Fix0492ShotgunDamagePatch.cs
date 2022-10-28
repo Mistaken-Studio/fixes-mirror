@@ -24,19 +24,17 @@ namespace Mistaken.Fixes.Patch
 
             newInstructions.InsertRange(index, new CodeInstruction[]
             {
-                new CodeInstruction(OpCodes.Ldarg_1),
-                new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(ReferenceHub), nameof(ReferenceHub.characterClassManager))),
-                new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(CharacterClassManager), nameof(CharacterClassManager.CurClass))),
-                new CodeInstruction(OpCodes.Ldc_I4, (int)RoleType.Scp0492),
-                new CodeInstruction(OpCodes.Ceq),
-                new CodeInstruction(OpCodes.Or),
+                new(OpCodes.Ldarg_1),
+                new(OpCodes.Ldfld, AccessTools.Field(typeof(CharacterClassManager), nameof(CharacterClassManager.CurClass))),
+                new(OpCodes.Ldc_I4, (int)RoleType.Scp0492),
+                new(OpCodes.Ceq),
+                new(OpCodes.Or),
             });
 
-            for (int i = 0; i < newInstructions.Count; i++)
-                yield return newInstructions[i];
+            foreach (var instruction in newInstructions)
+                yield return instruction;
 
             NorthwoodLib.Pools.ListPool<CodeInstruction>.Shared.Return(newInstructions);
-            yield break;
         }
     }
 }

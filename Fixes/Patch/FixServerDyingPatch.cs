@@ -15,7 +15,7 @@ using NorthwoodLib.Pools;
 namespace Mistaken.Fixes.Patch
 {
     [HarmonyPatch(typeof(NetworkConnection), "TransportReceive")]
-    internal class FixServerDyingPatch
+    internal static class FixServerDyingPatch
     {
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
         {
@@ -29,20 +29,19 @@ namespace Mistaken.Fixes.Patch
 
             newInstructions.InsertRange(index, new CodeInstruction[]
             {
-                new CodeInstruction(OpCodes.Dup),
-                new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(NetworkConnection), nameof(NetworkConnection.connectionId))),
-                new CodeInstruction(OpCodes.Ldc_I4_0),
-                new CodeInstruction(OpCodes.Ceq),
-                new CodeInstruction(OpCodes.Brfalse_S, continueLabel),
-                new CodeInstruction(OpCodes.Pop),
-                new CodeInstruction(OpCodes.Ret),
+                new(OpCodes.Dup),
+                new(OpCodes.Ldfld, AccessTools.Field(typeof(NetworkConnection), nameof(NetworkConnection.connectionId))),
+                new(OpCodes.Ldc_I4_0),
+                new(OpCodes.Ceq),
+                new(OpCodes.Brfalse_S, continueLabel),
+                new(OpCodes.Pop),
+                new(OpCodes.Ret),
             });
 
-            for (int i = 0; i < newInstructions.Count; i++)
-                yield return newInstructions[i];
+            foreach (var instruction in newInstructions)
+                yield return instruction;
 
             ListPool<CodeInstruction>.Shared.Return(newInstructions);
-            yield break;
         }
     }
 }

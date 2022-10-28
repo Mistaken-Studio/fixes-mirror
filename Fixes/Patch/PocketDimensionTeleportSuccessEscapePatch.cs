@@ -27,29 +27,27 @@ namespace Mistaken.Fixes.Patch
 
             newInstructions.InsertRange(index, new CodeInstruction[]
             {
-                new CodeInstruction(OpCodes.Dup),
-                new CodeInstruction(OpCodes.Brtrue_S, skipLabel),
-                new CodeInstruction(OpCodes.Pop),
-                new CodeInstruction(OpCodes.Ldc_I4, (int)MapGeneration.RoomName.Hcz106),
-                new CodeInstruction(OpCodes.Ldc_I4, (int)MapGeneration.FacilityZone.HeavyContainment),
-                new CodeInstruction(OpCodes.Ldc_I4, (int)MapGeneration.RoomShape.Endroom),
-                new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(MapGeneration.RoomIdUtils), nameof(MapGeneration.RoomIdUtils.FindRooms))),
-                new CodeInstruction(OpCodes.Call, AccessTools.FirstMethod(typeof(System.Linq.Enumerable), (x) =>
+                new(OpCodes.Dup),
+                new(OpCodes.Brtrue_S, skipLabel),
+                new(OpCodes.Pop),
+                new(OpCodes.Ldc_I4, (int)MapGeneration.RoomName.Hcz106),
+                new(OpCodes.Ldc_I4, (int)MapGeneration.FacilityZone.HeavyContainment),
+                new(OpCodes.Ldc_I4, (int)MapGeneration.RoomShape.Endroom),
+                new(OpCodes.Call, AccessTools.Method(typeof(MapGeneration.RoomIdUtils), nameof(MapGeneration.RoomIdUtils.FindRooms))),
+                new(OpCodes.Call, AccessTools.FirstMethod(typeof(System.Linq.Enumerable), (x) =>
                     {
                         return x.Name == "Single" && x.GetGenericArguments().Length == 1 && x.GetParameters().Length == 1 && x.ContainsGenericParameters;
                     }).MakeGenericMethod(typeof(MapGeneration.RoomIdentifier))),
-                new CodeInstruction(OpCodes.Dup),
-                new CodeInstruction(OpCodes.Stloc_0),
-                new CodeInstruction(OpCodes.Ldstr, "PocketDimensionTeleportSuccessEscapePatch works"),
-                new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Log), nameof(Log.Info), new System.Type[] { typeof(string) })),
+                new(OpCodes.Dup),
+                new(OpCodes.Stloc_0),
+                new(OpCodes.Ldstr, "PocketDimensionTeleportSuccessEscapePatch works"),
+                new(OpCodes.Call, AccessTools.Method(typeof(Log), nameof(Log.Info), new[] { typeof(string) })),
             });
 
-            for (int i = 0; i < newInstructions.Count; i++)
-                yield return newInstructions[i];
+            foreach (var instruction in newInstructions)
+                yield return instruction;
 
             NorthwoodLib.Pools.ListPool<CodeInstruction>.Shared.Return(newInstructions);
-
-            yield break;
         }
     }
 }

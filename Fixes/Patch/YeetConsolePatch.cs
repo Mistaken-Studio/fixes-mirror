@@ -4,7 +4,6 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 using HarmonyLib;
@@ -21,26 +20,28 @@ namespace Mistaken.Fixes.Patch
     {
         public static IEnumerator<float> UpdateConsolePrint()
         {
-            ConsoleMessages.Clear();
+            _consoleMessages.Clear();
             int rid = RoundPlus.RoundId;
+
             while (rid == RoundPlus.RoundId)
             {
                 yield return Timing.WaitForSeconds(0.5f);
-                foreach (var message in ConsoleMessages.ToArray())
+
+                foreach (var message in _consoleMessages.ToArray())
                 {
                     if (message.Connection is null || message.Transmission == null)
                     {
-                        ConsoleMessages.Remove(message);
+                        _consoleMessages.Remove(message);
                         continue;
                     }
 
                     message.Transmission.SendToClient(message.Connection, message.Text, message.Color);
-                    ConsoleMessages.Remove(message);
+                    _consoleMessages.Remove(message);
                 }
             }
         }
 
-        private static List<Message> ConsoleMessages { get; set; } = new List<Message>();
+        private static readonly List<Message> _consoleMessages = new();
 
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
         {
@@ -52,22 +53,20 @@ namespace Mistaken.Fixes.Patch
 
             newInstructions.InsertRange(index, new CodeInstruction[]
             {
-                new CodeInstruction(OpCodes.Newobj, AccessTools.Constructor(typeof(Message), new Type[]
+                new(OpCodes.Newobj, AccessTools.Constructor(typeof(Message), new[]
                 {
                     typeof(GameConsoleTransmission), typeof(NetworkConnection), typeof(string), typeof(string),
                 })),
-                new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(YeetConsolePatch), nameof(YeetConsolePatch.Add))),
+                new(OpCodes.Call, AccessTools.Method(typeof(YeetConsolePatch), nameof(YeetConsolePatch.Add))),
             });
 
-            for (int i = 0; i < newInstructions.Count; i++)
-                yield return newInstructions[i];
+            foreach (var instruction in newInstructions)
+                yield return instruction;
 
             NorthwoodLib.Pools.ListPool<CodeInstruction>.Shared.Return(newInstructions);
-
-            yield break;
         }
 
-        private static void Add(Message msg) => ConsoleMessages.Add(msg);
+        private static void Add(Message msg) => _consoleMessages.Add(msg);
 
         private struct Message
         {
